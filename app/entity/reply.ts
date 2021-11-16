@@ -51,47 +51,18 @@
 //   reply_user_id: {
 //     type: DataTypes.INTEGER(10).UNSIGNED,
 //     allowNull: true,
-//     defaultValue: 0,
-//     comment: '回复对象id,0-代表匿名回复'
-//   },
-//   // 创建时间
-//   created_at: {
-//     type: DataTypes.DATE,
-//     get() {
-//       return moment(this.getDataValue('created_at')).format('YYYY-MM-DD HH:mm:ss');
-//     }
-//   }
-// }, {
-//   sequelize,
-//   tableName: 'reply',
-//   modelName: 'reply'
-// })
-
-// // 一对多：评论表下拥有多个评论
-// // Comment.hasMany(Reply, {
-// //   foreignKey: 'comment_id',
-// //   sourceKey: 'id',
-// //   as: 'reply'
-// // })
-// //
-// // Reply.belongsTo(Comment, {
-// //   foreignKey: 'comment_id',
-// //   targetKey: 'id',
-// //   as: 'comment'
-// // })
-
-// module.exports = {
-//   Reply
-// }
-
 import {
   Entity,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
 } from "typeorm";
 import { BaseEntity } from "./base";
+import { Comment } from "./comment";
+import { User } from "./user";
 
 @Entity()
 export class Reply extends BaseEntity {
@@ -109,6 +80,9 @@ export class Reply extends BaseEntity {
   @Column({ type: "integer", comment: "关联的评论id", nullable: false })
   comment_id;
 
+  @ManyToOne(() => Comment, (comment) => comment.replys)
+  comment_info: Comment;
+
   @Column({ type: "integer", comment: "关联的文章id", nullable: false })
   article_id;
 
@@ -119,6 +93,9 @@ export class Reply extends BaseEntity {
     comment: "回复用户id,0-代表匿名回复",
   })
   user_id;
+
+  @ManyToOne(() => User, (user) => user.replys)
+  user_info: User;
 
   @Column({
     type: "char",

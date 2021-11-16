@@ -26,7 +26,7 @@ export default class Db {
         username: user,
         password: password,
         database: dbName,
-        timezone: "+08:00",
+        timezone: "local",
         entities: [Admin, Article, Category, Comment, Reply, User],
         synchronize: true,
         charset: charset,

@@ -10,12 +10,15 @@ import {
   prefix,
   type,
   validate,
+  del,
+  put,
 } from "daruk";
 
 import {
   UserLoginValidator,
   RegisterValidator,
   UserListValidator,
+  UserUpdateValidator,
 } from "../validators/user";
 import { auth } from "../glues/auth";
 import { UserSer } from "../services/user";
@@ -29,14 +32,14 @@ class UserController {
   public UserSer: UserSer;
 
   //   用户注册
-  @post("/register")
   @validate(RegisterValidator as any)
+  @post("/register")
   public async register(ctx: DarukContext, next: Next) {
-    const { email, password1, nickname } = ctx.request.body;
+    const { email, password1, username } = ctx.request.body;
     const [error, data] = await this.UserSer.create({
       email,
       password: password1,
-      nickname,
+      username,
     });
 
     if (!error) {
@@ -48,8 +51,8 @@ class UserController {
   }
 
   //   登陆
-  @post("/login")
   @validate(UserLoginValidator as any)
+  @post("/login")
   public async login(ctx: DarukContext, next: Next) {
     const { email, password } = ctx.request.body;
 
@@ -64,8 +67,14 @@ class UserController {
   }
 
   //   获取信息
-  @auth({ role: RoleTypes.USER })
+  @validate({
+    id: {
+      type: "number",
+      required: true,
+    },
+  })
   @get("/auth")
+  @auth({ role: RoleTypes.USER })
   public async auth(ctx: DarukContext, next: Next) {
     const { id } = ctx.request.query;
 
@@ -83,13 +92,14 @@ class UserController {
 
   // 获取用户列表
   // 需要管理员及以上才能操作
-  @auth({ role: RoleTypes.ADMIN })
-  @validate(UserListValidator as any)
   @get("list")
+  @validate(UserListValidator as any)
+  @auth({ role: RoleTypes.ADMIN })
   public async list(ctx: DarukContext, next: Next) {
     let [error, data] = await this.UserSer.list(ctx.query);
+
+    console.log(error, data);
     if (!error) {
-      ctx.response.status = 200;
       ctx.body = ResTypes.json(data);
     } else {
       ctx.body = ResTypes.fail(error);
@@ -107,9 +117,52 @@ class UserController {
   })
   @get("/detail/:id")
   public async detail(ctx: DarukContext, next: Next) {
-    let [error, data] = await this.UserSer.list(ctx.query);
+    const { id } = ctx.params;
+
+    let [error, data] = await this.UserSer.detail(Number(id));
+
     if (!error) {
-      ctx.response.status = 200;
+      ctx.body = ResTypes.json(data);
+    } else {
+      ctx.body = ResTypes.fail(error);
+    }
+  }
+
+  // 删除用户
+  // 需要管理员及以上才能操作
+  @auth({ role: RoleTypes.ADMIN })
+  @validate({
+    id: {
+      type: "number",
+      required: true,
+    },
+  })
+  @del("/detail/:id")
+  public async deleteUser(ctx: DarukContext, next: Next) {
+    const { id } = ctx.params;
+
+    let [error, data] = await this.UserSer.destroy(Number(id));
+    if (!error) {
+      ctx.body = ResTypes.json("删除用户成功");
+    } else {
+      ctx.body = ResTypes.fail(error);
+    }
+  }
+
+  // 更新用户信息
+  // 需要管理员及以上才能操作
+  @auth({ role: RoleTypes.ADMIN })
+  @validate(UserUpdateValidator as any)
+  @put("/update/:id")
+  public async updateUser(ctx: DarukContext, next: Next) {
+    const { id } = ctx.params;
+    const { email, username, status } = ctx.request.body;
+    let [error, data] = await this.UserSer.update(Number(id), {
+      email,
+      username,
+      status,
+    });
+    if (!error) {
       ctx.body = ResTypes.json(data);
     } else {
       ctx.body = ResTypes.fail(error);

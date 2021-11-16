@@ -62,3 +62,24 @@ export const UserListValidator: RulesType = {
     required: false,
   },
 };
+
+export const UserUpdateValidator: RulesType = {
+  id: {
+    type: "string",
+    required: true,
+  },
+  username: {
+    type: "string",
+    min: 2,
+    max: 16,
+    required: true,
+  },
+  email: {
+    type: "email",
+    required: true,
+  },
+  status: {
+    type: "string",
+    required: true,
+  },
+};

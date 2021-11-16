@@ -17,6 +17,7 @@ import { auth } from "../glues/auth";
 import { AdminSer } from "../services/admin";
 import { ResTypes } from "../glues/resTypes";
 import { generateToken } from "../util";
+import { errors } from "../glues/http-exception";
 
 @controller()
 @prefix("/api/v1/admin")
@@ -63,8 +64,7 @@ class AdminController {
   @auth({ role: RoleTypes.ADMIN })
   @get("/auth")
   public async auth(ctx: DarukContext, next: Next) {
-    const { id } = ctx.request.query;
-
+    const id = ctx.auth.uid;
     const [error, data] = await this.adminSer.detail(Number(id));
     console.log(error, data);
     if (!error) {

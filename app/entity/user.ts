@@ -71,8 +71,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from "typeorm";
 import { BaseEntity } from "./base";
+import { Comment } from "./comment";
+import { Reply } from "./reply";
 
 @Entity()
 export class User extends BaseEntity {
@@ -93,6 +96,7 @@ export class User extends BaseEntity {
 
   @Column({
     type: "char",
+    length: 255,
     comment: "登陆密码",
   })
   password: string;
@@ -104,4 +108,10 @@ export class User extends BaseEntity {
   })
   status: number;
   return: any;
+
+  @OneToMany(() => Comment, (comment) => comment.user_info)
+  comments: Comment[];
+
+  @OneToMany(() => Reply, (reply) => reply.user_info)
+  replys: Reply[];
 }

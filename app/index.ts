@@ -7,11 +7,11 @@ import { DarukServer } from "daruk";
     validateOptions: {
       error: true,
     },
-    errorOptions: {
-      //   html: (err: Error, ctx: DarukContext) => {
-      //     ctx.body = `${err.message}`;
-      //   },
-    },
+    // errorOptions: {
+    //   //   html: (err: Error, ctx: DarukContext) => {
+    //   //     ctx.body = `${err.message}`;
+    //   //   },
+    // },
   });
   let port = 3000;
 

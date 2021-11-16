@@ -11,6 +11,11 @@ export const config = {
   security: {
     secretKey: "secretKey",
     // 过期时间 1小时
-    expiresIn: 60 * 60,
+    expiresIn: 60 * 60 * 2,
+  },
+  qiniu: {
+    scope: "blog-hds-com",
+    ak: "0vC3edtS1I3i-ddrkfoCLHQ25Emmgsz2qnKAV87c",
+    sk: "YlqUHKGGHZcnDiEHnsgcHHW5mBszhTdIJY9tD4cm",
   },
 };

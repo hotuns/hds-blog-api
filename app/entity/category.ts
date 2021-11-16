@@ -62,7 +62,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from "typeorm";
+import { Article } from "./article";
 import { BaseEntity } from "./base";
 
 @Entity()
@@ -94,4 +96,7 @@ export class Category extends BaseEntity {
     comment: "父类别id,当id=0时,说明是根节点",
   })
   parent_id;
+
+  @OneToMany(() => Article, (article) => article.category_info)
+  articles: Article[];
 }

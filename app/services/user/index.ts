@@ -21,12 +21,12 @@ export class UserSer {
   @inject("Db") public Db!: Db;
 
   /**创建用户 */
-  public async create(params) {
+  public async create(params: { email; password; username }) {
     const { email, password, username } = params;
 
     const repository = await (await Db.getConnection()).getRepository(User);
 
-    const isExist = repository.findOne({
+    const isExist = await repository.findOne({
       email: email,
       deleted_at: null,
     });
@@ -34,8 +34,6 @@ export class UserSer {
     if (Boolean(isExist)) {
       throw new errors.Existing("用户已存在");
     }
-
-    console.log("isExist", isExist);
 
     const user = new User();
     user.username = username;
@@ -94,15 +92,15 @@ export class UserSer {
           id: id,
           status: status,
         },
-        // select: [
-        //   "email",
-        //   "id",
-        //   "nickname",
-        //   "password",
-        //   "updated_at",
-        //   "created_at",
-        //   "deleted_at",
-        // ],
+        select: [
+          "email",
+          "id",
+          "status",
+          "username",
+          "updated_at",
+          "created_at",
+          "deleted_at",
+        ],
       });
 
       if (!user) {
@@ -127,7 +125,7 @@ export class UserSer {
 
     try {
       // 软删除用户
-      let res = await repository.softDelete(user);
+      let res = await repository.softRemove(user);
 
       return [null, res];
     } catch (err) {
@@ -151,7 +149,7 @@ export class UserSer {
     // 更新用户
     user.email = v.email;
     user.username = v.username;
-    user.status = v.status;
+    user.status = Number(v.status);
 
     try {
       const res = await repository.save(user);
@@ -180,6 +178,7 @@ export class UserSer {
         username: Like("%username%"),
       };
     }
+
     try {
       const repository = await Db.getRepository(User);
       const user = await repository.findAndCount({
@@ -190,7 +189,7 @@ export class UserSer {
         take: page_size,
         skip: (page - 1) * page_size,
       });
-
+      console.log("filter", user);
       const data = {
         data: user[0],
         // 分页

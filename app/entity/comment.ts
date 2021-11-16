@@ -65,8 +65,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
 } from "typeorm";
+import { Article } from "./article";
 import { BaseEntity } from "./base";
+import { Reply } from "./reply";
+import { User } from "./user";
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -81,12 +86,9 @@ export class Comment extends BaseEntity {
   })
   status;
 
-  @Column({
-    type: "integer",
-    comment: "关联的评论文章id",
-    nullable: false,
-  })
-  article_id;
+  //  所属文章
+  @ManyToOne(() => Article, (article) => article.comments)
+  article_info: Article;
 
   @Column({
     type: "integer",
@@ -96,6 +98,9 @@ export class Comment extends BaseEntity {
   })
   user_id;
 
+  @ManyToOne(() => User, (user) => user.comments)
+  user_info: User;
+
   @Column({
     type: "char",
     comment: "匿名评论时，填的联系邮箱",
@@ -103,4 +108,7 @@ export class Comment extends BaseEntity {
     default: 0,
   })
   email;
+
+  @OneToMany(() => Reply, (reply) => reply.comment_info)
+  replys: Reply[];
 }
