@@ -1,64 +1,3 @@
-// const moment = require('moment');
-
-// const { DataTypes, Model } = require('sequelize')
-// const { sequelize } = require('@core/db')
-
-// class Comment extends Model {
-
-// }
-
-// Comment.init({
-//   id: {
-//     type: DataTypes.INTEGER(10).UNSIGNED,
-//     primaryKey: true,
-//     autoIncrement: true
-//   },
-//   content: {
-//     type: DataTypes.TEXT,
-//     allowNull: false,
-//     comment: '评论内容'
-//   },
-//   status: {
-//     type: DataTypes.TINYINT,
-//     allowNull: true,
-//     defaultValue: 0,
-//     comment: '评论状态：0-审核中,1-审核通过,2-审核不通过'
-//   },
-//   article_id: {
-//     type: DataTypes.INTEGER(10).UNSIGNED,
-//     allowNull: false,
-//     comment: '关联的评论文章id'
-//   },
-//   user_id: {
-//     type: DataTypes.INTEGER(10).UNSIGNED,
-//     allowNull: true,
-//     defaultValue: 0,
-//     comment: '评论用户id,0-代表匿名回复'
-//   },
-//   email: {
-//     type: DataTypes.STRING,
-//     allowNull: true,
-//     defaultValue: 0,
-//     comment: '匿名评论时，填的联系邮箱'
-//   },
-
-//   created_at: {
-//     type: DataTypes.DATE,
-//     allowNull: false,
-//     get() {
-//       return moment(this.getDataValue('created_at')).format('YYYY-MM-DD HH:mm:ss');
-//     }
-//   }
-// }, {
-//   sequelize,
-//   modelName: 'comment',
-//   tableName: 'comment'
-// })
-
-// module.exports = {
-//   Comment
-// }
-
 import {
   Entity,
   Column,
@@ -67,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from "typeorm";
 import { Article } from "./article";
 import { BaseEntity } from "./base";
@@ -87,24 +27,25 @@ export class Comment extends BaseEntity {
   status;
 
   //  所属文章
-  @ManyToOne(() => Article, (article) => article.comments)
+  @ManyToOne(() => Article, (article) => article.comments, {
+    cascade: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "article_id" })
   article_info: Article;
 
-  @Column({
-    type: "integer",
-    comment: "评论用户id,0-代表匿名回复",
-    nullable: true,
-    default: 0,
+  @ManyToOne(() => User, (user) => user.comments, {
+    cascade: true,
+    onDelete: "SET NULL",
   })
-  user_id;
-
-  @ManyToOne(() => User, (user) => user.comments)
+  @JoinColumn({ name: "user_id" })
   user_info: User;
 
   @Column({
     type: "char",
     comment: "匿名评论时，填的联系邮箱",
     nullable: true,
+    length: 100,
     default: 0,
   })
   email;

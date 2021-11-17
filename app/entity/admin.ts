@@ -1,12 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-} from "typeorm";
+import { Entity, Column, OneToMany } from "typeorm";
 import { Article } from "./article";
 import { BaseEntity } from "./base";
 

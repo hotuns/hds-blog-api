@@ -4,9 +4,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { BaseEntity } from "./base";
 import { Admin } from "./admin";
@@ -68,12 +68,20 @@ export class Article extends BaseEntity {
   })
   favorite_num;
 
-  @ManyToOne(() => Admin, (admin) => admin.articles)
+  @ManyToOne(() => Admin, (admin) => admin.articles, {
+    cascade: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "admin_id" })
   admin_info: Admin;
 
-  @ManyToOne(() => Category, (category) => category.articles)
+  @ManyToOne(() => Category, (category) => category.articles, {
+    cascade: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "category_id" })
   category_info: Category;
 
-  @ManyToOne(() => Comment, (comment) => comment.article_info)
+  @OneToMany(() => Comment, (comment) => comment.article_info)
   comments: Comment[];
 }

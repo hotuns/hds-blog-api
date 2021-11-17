@@ -21,7 +21,7 @@ interface article_params {
 }
 
 interface article_list_params {
-  categoryId?;
+  category_id?;
   keyword?;
   status?;
   page_size?;
@@ -60,7 +60,6 @@ export class ArticleSer {
     const admin = await (
       await Db.getRepository(Admin)
     ).findOne({ id: params.admin_id });
-
     if (admin) {
       article.admin_info = admin;
     }
@@ -70,7 +69,6 @@ export class ArticleSer {
     ).findOne({
       id: params.admin_id,
     });
-
     if (category) {
       article.category_info = category;
     }
@@ -200,13 +198,13 @@ export class ArticleSer {
 
   // 列表
   public async list(query: article_list_params) {
-    const { categoryId, keyword, page_size = 10, status, page = 1 } = query;
+    const { category_id, keyword, page_size = 10, status, page = 1 } = query;
 
     const filter: any = {
       deleted_at: null,
     };
-    if (categoryId) {
-      filter.categoryId = categoryId;
+    if (category_id) {
+      filter.category_id = category_id;
     }
     if (keyword) {
       filter.id = keyword;
