@@ -8,7 +8,7 @@
         "allowJs": true, // 允许编译 javascript 文件
         "checkJs": true, // 报告 javascript 文件中的错误
         // "jsx": "preserve", // 指定 jsx 代码的生成: 'preserve', 'react-native', or 'react'
-        "declaration": true, // 生成相应的 '.d.ts' 文件
+        // "declaration": true, // 生成相应的 '.d.ts' 文件
         "sourceMap": true, // 生成相应的 '.map' 文件
         // "outFile": "./", // 将输出文件合并为一个文件
         "outDir": "./build", // 指定输出目录
