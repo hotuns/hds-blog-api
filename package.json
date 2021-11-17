@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=dev  ts-node --project tsconfig.json --files app/index.ts",
-    "watch": "NODE_ENV=dev ts-node-dev --project tsconfig.json --files app/index.ts",
+    "dev": "NODE_ENV=dev  ts-node --project tsconfig.json --files src/index.ts",
+    "watch": "NODE_ENV=dev ts-node-dev --project tsconfig.json --files src/index.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,9 +16,11 @@
     "@types/crypto-js": "^4.0.2",
     "@types/lodash": "^4.14.176",
     "basic-auth": "^2.0.1",
+    "chalk": "4.1.2",
     "crypto-js": "^4.1.1",
     "daruk": "^2.3.8",
     "highlight.js": "^11.3.1",
+    "inquirer": "7.3.3",
     "jsonwebtoken": "^8.5.1",
     "koa-bodyparser": "^4.3.0",
     "koa-ejs": "^4.3.0",
@@ -27,11 +29,15 @@
     "lodash": "^4.17.21",
     "markdown-it": "^12.2.0",
     "mysql": "^2.18.1",
+    "node-ssh": "12.0.1",
+    "ora": "5.4.1",
     "qiniu": "^7.4.0",
+    "shelljs": "0.8.4",
     "typeorm": "^0.2.37",
     "typescript": "^4.0.2",
     "validator": "^13.7.0",
-    "xss": "^1.0.10"
+    "xss": "^1.0.10",
+    "zip-local": "0.3.4"
   },
   "devDependencies": {
     "@types/basic-auth": "^1.1.3",

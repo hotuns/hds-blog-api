@@ -9,12 +9,12 @@
         "checkJs": true, // 报告 javascript 文件中的错误
         // "jsx": "preserve", // 指定 jsx 代码的生成: 'preserve', 'react-native', or 'react'
         "declaration": true, // 生成相应的 '.d.ts' 文件
-        // "sourceMap": true, // 生成相应的 '.map' 文件
+        "sourceMap": true, // 生成相应的 '.map' 文件
         // "outFile": "./", // 将输出文件合并为一个文件
         "outDir": "./build", // 指定输出目录
-        "rootDir": "./app", // 用来控制输出目录结构 --outDir.
+        "rootDir": "src", // 用来控制输出目录结构 --outDir.
         "removeComments": true, // 删除编译后的所有的注释
-        "noEmit": true, // 不生成输出文件
+        // "noEmit": true, // 不生成输出文件
         // "importHelpers": true, // 从 tslib 导入辅助工具函数
         // "isolatedModules": true, // 将每个文件作为单独的模块 （与 'ts.transpileModule' 类似）.
         /* 严格的类型检查选项 */
@@ -43,13 +43,13 @@
         // "inlineSources": true, // 将代码与 sourcemaps 生成到一个文件中，要求同时设置了 --inlineSourceMap 或 --sourceMap 属性
         // /* 其他选项 */
         "experimentalDecorators": true, // 启用装饰器
-        "emitDecoratorMetadata": true // 为装饰器提供元数据的支持,
+        "emitDecoratorMetadata": true, // 为装饰器提供元数据的支持,
+        "esModuleInterop": true,
     },
     "exclude": [
         "node_modules"
     ],
     "include": [
-        "./app/**/*.ts"
-, "app/validators/admin.js"    ]
-
+        "src/**/*.ts"
+    ]
 }
