@@ -9,20 +9,16 @@
 const fs = require("fs");
 const path = require("path");
 const ora = require("ora");
-const zipper = require("zip-local");
 const shell = require("shelljs");
 const chalk = require("chalk");
 const CONFIG = require(path.resolve(process.cwd(), "./deploy.config.js"));
 const inquirer = require("inquirer");
 const NodeSSH = require("node-ssh").NodeSSH;
-
 const SSH = new NodeSSH();
 const errorLog = (error) => console.log(chalk.red(`---------------> ${error}`));
 const defaultLog = (log) => console.log(chalk.blue(`---------------> ${log}`));
 const successLog = (log) => console.log(chalk.green(`---------------> ${log}`));
 // 文件夹位置
-const distDirs = path.resolve(process.cwd(), CONFIG.DISTS || ["./dist"]);
-const distZipPath = path.resolve(process.cwd(), "./dist.zip");
 
 // 打包 npm run build
 const compileDist = async () => {
@@ -32,34 +28,16 @@ const compileDist = async () => {
   successLog("编译完成");
 };
 
-// ********* 压缩dist 文件夹 *********
-const zipDist = async () => {
-  try {
-    if (fs.existsSync(distZipPath)) {
-      defaultLog("dist.zip已经存在, 即将删除压缩包");
-      fs.unlinkSync(distZipPath);
-    } else {
-      defaultLog("即将开始压缩zip文件");
-    }
-    zipper.sync.zip();
-    await zipper.sync.zip(distDir).compress().save(distZipPath);
-    successLog("文件夹压缩成功");
-  } catch (error) {
-    errorLog(error);
-    errorLog("压缩dist文件夹失败");
-  }
-};
-
-// ********* 执行指令 *********
+// ********* 执行线上文件夹指令 *********
 const runCommond = async (commond) => {
   const result = await SSH.exec(commond, [], { cwd: CONFIG.PATH });
 
   console.log(chalk.yellow(result));
 };
 const COMMONDS = CONFIG.COMMONDS || [];
-// ********* 执行指令 *********
-const runBeforeCommand = async () => {
-  defaultLog("执行前置命令");
+// ********* 执行线上文件夹指令 *********
+const runAfterCommand = async () => {
+  defaultLog("执行命令");
   for (let i = 0; i < COMMONDS.length; i++) {
     await runCommond(COMMONDS[i]);
   }
@@ -70,8 +48,9 @@ const uploadZipBySSH = async () => {
   // 上传文件
   const spinner = ora("准备上传文件").start();
   try {
-    for (let i = 0; i < distDirs.length; i++) {
-      const item = distDirs[i];
+    for (let i = 0; i < CONFIG.DIST.length; i++) {
+      const item = CONFIG.DIST[i];
+
       const thepath = path.resolve(process.cwd(), item);
       defaultLog(`文件名： ${thepath} : ${CONFIG.PATH + item}`);
       const stat = fs.lstatSync(thepath);
@@ -80,7 +59,7 @@ const uploadZipBySSH = async () => {
         : await SSH.putFile(thepath, CONFIG.PATH + item);
     }
 
-    spinner.stop();
+    successLog("完成上传");
     successLog("部署完成");
     process.exit(0);
   } catch (error) {
@@ -103,8 +82,8 @@ const connectSSh = async () => {
       password: CONFIG.SSH_KEY,
       port: CONFIG.PORT || 22,
     }).then(async () => {
-      await runBeforeCommand();
       await uploadZipBySSH();
+      await runAfterCommand();
     });
     successLog("SSH 连接成功");
   } catch (error) {
@@ -118,13 +97,12 @@ async function runTask(hasBuild) {
   if (hasBuild) {
     await compileDist();
   }
-
   await connectSSh();
 }
 
 console.log(CONFIG);
 
-// defaultLog('服务器配置检查')
+defaultLog("服务器配置检查");
 inquirer
   .prompt([
     {
