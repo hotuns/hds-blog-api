@@ -5,7 +5,7 @@ export const createValidator: RulesType = {
   },
   img_url: {
     type: "string",
-    required: true,
+    required: false,
   },
   content: {
     type: "string",

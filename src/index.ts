@@ -1,4 +1,5 @@
 import { DarukServer } from "daruk";
+import { md2sql } from "./MD2SQL";
 
 (async () => {
   let app = DarukServer({

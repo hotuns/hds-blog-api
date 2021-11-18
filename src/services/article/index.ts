@@ -229,7 +229,8 @@ export class ArticleSer {
       }
 
       const article = await qb
-        .orderBy("article.created_at", "DESC")
+        .orderBy("article.sort_order", "DESC")
+        .addOrderBy("article.created_at", "DESC")
         .take(page_size)
         .skip((page - 1) * page_size)
         .getManyAndCount();
