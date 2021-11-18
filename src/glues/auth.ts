@@ -23,7 +23,6 @@ export function auth(opt?: PermissionConfig) {
       // token 开发者 传递令牌
       // token body header
       // HTTP 规定 身份验证机制 HttpBasicAuth
-      console.log("opt", opt);
 
       const tokenToken = basicAuth(ctx.req);
 

@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=dev  ts-node --project tsconfig.json --files src/index.ts",
-    "watch": "NODE_ENV=dev ts-node-dev --project tsconfig.json --files src/index.ts",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": " NODE_ENV=development  ts-node --project tsconfig.json --files src/index.ts",
+    "watch": " NODE_ENV=development ts-node-dev --project tsconfig.json --files src/index.ts",
+    "build": "NODE_ENV=production tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "node deploy",
+    "pm2": "export NODE_ENV=production && pm2 start build/index.js --watch --name=blog-api"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +21,7 @@
     "chalk": "4.1.2",
     "crypto-js": "^4.1.1",
     "daruk": "^2.3.8",
+    "dotenv": "^10.0.0",
     "highlight.js": "^11.3.1",
     "inquirer": "7.3.3",
     "jsonwebtoken": "^8.5.1",

@@ -13,7 +13,8 @@ import { DarukServer } from "daruk";
     //   //   },
     // },
   });
-  let port = process.env.PORT || 3000;
+
+  let port = process.env.NODE_ENV !== "production" ? 3000 : 3001;
 
   await app.loadFile("./middlewares");
   await app.loadFile("./glues");

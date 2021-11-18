@@ -102,7 +102,7 @@ class UserController {
   @auth({ role: RoleTypes.ADMIN })
   @validate(createValidator as any)
   @put("/article/:id")
-  public async updateUser(ctx: DarukContext, next: Next) {
+  public async update(ctx: DarukContext, next: Next) {
     const { id } = ctx.params;
     let [error, data] = await this.ArticleSer.update(
       Number(id),

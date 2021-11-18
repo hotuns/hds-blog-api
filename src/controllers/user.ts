@@ -67,16 +67,10 @@ class UserController {
   }
 
   //   获取信息
-  @validate({
-    id: {
-      type: "number",
-      required: true,
-    },
-  })
   @get("/auth")
   @auth({ role: RoleTypes.USER })
   public async auth(ctx: DarukContext, next: Next) {
-    const { id } = ctx.request.query;
+    const id = ctx.auth.uid;
 
     const [error, data] = await this.UserSer.detail(
       Number(id),

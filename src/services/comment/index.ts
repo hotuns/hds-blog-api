@@ -176,7 +176,7 @@ export class CommentSer {
 
     try {
       const repository = await Db.getRepository(Comment);
-      let qb = await repository
+      let qb = repository
         .createQueryBuilder("comment")
         .leftJoinAndSelect("comment.replys", "replys")
         .leftJoinAndSelect("comment.user_info", "user_info")
@@ -191,11 +191,13 @@ export class CommentSer {
       }
 
       if (content) {
-        qb.where("comment.content LIKE :content", { content: `"%content%"` });
+        qb.where("comment.content LIKE :content", {
+          content: `%${content}%`,
+        });
       }
 
       const comments = await qb
-        .orderBy("created_at", "DESC")
+        .orderBy("comment.created_at", "DESC")
         .take(page_size)
         .skip((page - 1) * page_size)
         .getManyAndCount();
@@ -231,7 +233,7 @@ export class CommentSer {
 
     try {
       const repository = await Db.getRepository(Comment);
-      let qb = await repository
+      let qb = repository
         .createQueryBuilder("comment")
         .leftJoinAndSelect("comment.replys", "replys")
         .leftJoinAndSelect("comment.user_info", "user_info")
@@ -245,8 +247,12 @@ export class CommentSer {
         qb.where("comment.status = :status", { status });
       }
 
+      if (article_id) {
+        qb.where("comment.article_id = :article_id", { article_id });
+      }
+
       if (content) {
-        qb.where("comment.content LIKE :content", { content: `"%content%"` });
+        qb.where("comment.content LIKE :content", { content: `%${content}%` });
       }
 
       const comments = await qb

@@ -52,7 +52,6 @@ class AdminController {
 
     const [error, token] = await this.adminSer.login({ email, password });
 
-    console.log(error, token);
     if (!error) {
       ctx.body = ResTypes.json({ token });
     } else {
@@ -66,7 +65,7 @@ class AdminController {
   public async auth(ctx: DarukContext, next: Next) {
     const id = ctx.auth.uid;
     const [error, data] = await this.adminSer.detail(Number(id));
-    console.log(error, data);
+
     if (!error) {
       ctx.body = ResTypes.json(data);
     } else {

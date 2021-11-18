@@ -7,6 +7,7 @@ import { generateToken, isArray, unique } from "../../util";
 import { Repository, In, FindManyOptions } from "typeorm";
 import { Category } from "../../entity/category";
 import { Admin } from "../../entity/admin";
+import { Comment } from "../../entity/comment";
 
 interface article_params {
   title;
@@ -35,7 +36,7 @@ export class ArticleSer {
 
   /**创建 */
   public async create(params: article_params) {
-    const repository = await (await Db.getConnection()).getRepository(Article);
+    const repository = (await Db.getConnection()).getRepository(Article);
 
     const isExist = await repository.findOne({
       where: {
@@ -91,6 +92,7 @@ export class ArticleSer {
       const repository = await Db.getRepository(Article);
 
       let article = await repository.findOne({
+        relations: ["category_info", "admin_info"],
         where: {
           id: id,
           deleted_at: null,
@@ -102,8 +104,14 @@ export class ArticleSer {
         throw new errors.AuthFailed("没有找到相关文章！");
       }
 
-      return [null, article];
+      let comment_count = await (await Db.getRepository(Comment))
+        .createQueryBuilder("comment")
+        .where("comment.article_id = :id", { id: id })
+        .getCount();
+
+      return [null, Object.assign({ comment_count }, article)];
     } catch (error) {
+      console.log(error);
       return [error, null];
     }
   }
@@ -160,7 +168,7 @@ export class ArticleSer {
     const category = await (
       await Db.getRepository(Category)
     ).findOne({
-      id: v.admin_id,
+      id: v.category_id,
     });
 
     if (category) {
@@ -200,30 +208,31 @@ export class ArticleSer {
   public async list(query: article_list_params) {
     const { category_id, keyword, page_size = 10, status, page = 1 } = query;
 
-    const filter: any = {
-      deleted_at: null,
-    };
-    if (category_id) {
-      filter.category_id = category_id;
-    }
-    if (keyword) {
-      filter.id = keyword;
-    }
-    if (status) {
-      filter.status = status;
-    }
-
     try {
       const repository = await Db.getRepository(Article);
-      const article = await repository.findAndCount({
-        relations: ["admin_info", "category_info"],
-        where: filter,
-        order: {
-          created_at: "DESC",
-        },
-        take: page_size,
-        skip: (page - 1) * page_size,
-      });
+      let qb = repository
+        .createQueryBuilder("article")
+        .leftJoinAndSelect("article.admin_info", "admin_info")
+        .leftJoinAndSelect("article.category_info", "category_info");
+
+      if (status) {
+        qb.where("article.status = :status", { status });
+      }
+      if (category_id) {
+        qb.where("article.category_id = :category_id", { category_id });
+      }
+
+      if (keyword) {
+        qb.where("article.content LIKE :keyword", {
+          keyword: `%${keyword}%`,
+        }).orWhere("article.title LIKE :keyword", { keyword: `%${keyword}%` });
+      }
+
+      const article = await qb
+        .orderBy("article.created_at", "DESC")
+        .take(page_size)
+        .skip((page - 1) * page_size)
+        .getManyAndCount();
 
       const data = {
         data: article[0],
