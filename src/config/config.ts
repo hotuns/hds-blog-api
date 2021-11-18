@@ -1,12 +1,12 @@
 export const config = {
   environment: "dev",
   database: {
-    dbName: "hds_blog",
-    host: "7hds.com",
+    dbName: "",
+    host: "",
     port: 3306,
-    user: "root",
-    password: "hds1512",
-    charset: "utf8mb4",
+    user: "",
+    password: "",
+    charset: "",
   },
   security: {
     secretKey: "secretKey",
@@ -14,8 +14,8 @@ export const config = {
     expiresIn: 60 * 60 * 2,
   },
   qiniu: {
-    scope: "blog-hds-com",
-    ak: "0vC3edtS1I3i-ddrkfoCLHQ25Emmgsz2qnKAV87c",
-    sk: "YlqUHKGGHZcnDiEHnsgcHHW5mBszhTdIJY9tD4cm",
+    scope: "",
+    ak: "",
+    sk: "",
   },
 };
