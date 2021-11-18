@@ -1,5 +1,5 @@
 # dependencies
 node_modules
 build
-./app/config/config.ts
+/src/config/config.ts
 deploy.config.js
